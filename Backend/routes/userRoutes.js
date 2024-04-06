@@ -11,5 +11,4 @@ router.post("/logout", logoutUser);
 router.post("/follow/:id", protectRoute, followUnFollowUser); // Toggle state(follow/unfollow)
 router.post("/update/:id", protectRoute, updateUser);
 
-
 export default router;
