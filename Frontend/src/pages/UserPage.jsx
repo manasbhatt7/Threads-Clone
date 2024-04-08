@@ -1,36 +1,19 @@
 import { useEffect, useState } from "react";
-import UserHeader from "../Components/UserHeader"
-import UserPost from "../Components/UserPost"
+import UserHeader from "../Components/UserHeader";
 import { useParams } from "react-router-dom";
 import useShowToast from "../hooks/useShowToast";
 import { Flex, Spinner } from "@chakra-ui/react";
-import Post from "../Components/Post"
+import Post from "../Components/Post";
+import useGetUserProfile from "../hooks/useGetUserProfile";
 
 const UserPage = () => {
-	const [user, setUser] = useState(null);
+	const { user, loading } = useGetUserProfile();
 	const { username } = useParams();
 	const showToast = useShowToast();
-	const [loading, setLoading] = useState(true);
 	const [posts, setPosts] = useState([]);
 	const [fetchingPosts, setFetchingPosts] = useState(true);
-	
-	useEffect(() => {
-		const getUser = async () => {
-			try {
-				const res = await fetch(`/api/users/profile/${username}`);
-				const data = await res.json();
-				if (data.error) {
-					showToast("Error", data.error, "error");
-					return;
-				}
-				setUser(data);
-			} catch (error) {
-				showToast("Error", error, "error");
-			}finally{
-				setLoading(false);
-			}
-		};
 
+	useEffect(() => {
 		const getPosts = async () => {
 			setFetchingPosts(true);
 			try {
@@ -46,7 +29,6 @@ const UserPage = () => {
 			}
 		};
 
-		getUser();
 		getPosts();
 	}, [username, showToast]);
 
@@ -58,19 +40,11 @@ const UserPage = () => {
 		);
 	}
 	if (!user && !loading) return <h1>User not found</h1>;
-	
+
 	return (
-    <>
-            <UserHeader user={user}/>
-			{/* <UserPost likes={1200} replies={481} postImg='/post1.png' postTitle="Let's talk about threads." />
-			<UserPost likes={451} replies={12} postImg='/post2.png' postTitle='Nice tutorial. Highly recommended.' />
-			<UserPost
-				likes={6721}
-				replies={989}
-				postImg='/post3.png'
-				postTitle="I love this guy and can't wait to see him in cage. 💪"
-			/>
-			<UserPost likes={212} replies={56} postTitle='This is my first thread.' /> */}
+		<>
+			<UserHeader user={user} />
+
 			{!fetchingPosts && posts.length === 0 && <h1>User has not posts.</h1>}
 			{fetchingPosts && (
 				<Flex justifyContent={"center"} my={12}>
@@ -81,8 +55,8 @@ const UserPage = () => {
 			{posts.map((post) => (
 				<Post key={post._id} post={post} postedBy={post.postedBy} />
 			))}
-    </>
-  )
-}
+		</>
+	);
+};
 
-export default UserPage
+export default UserPage;
