@@ -55,7 +55,7 @@ const Post = ({ post, postedBy }) => {
 			setPosts(posts.filter((p) => p._id !== post._id));
 		} catch (error) {
 			showToast("Error", error.message, "error");
-		}
+		} 
 	};
 
 	if (!user) return null;
